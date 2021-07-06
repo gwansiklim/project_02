@@ -25,9 +25,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <title>Fun_Space</title>
 </head>
 <style>
+    * {
+        font-family: 'Jua', sans-serif;
+    }
+
     a {
         text-decoration-line: none;
         color: black;
@@ -35,13 +42,69 @@
 
     .domain {
         height: 150px;
-        padding-top: 20px;
-        padding-left: 30px;
+        padding-top: 70px;
     }
 </style>
 
 <body>
-        <div class="domain" onclick="location.href='/';">
-            <h1 style="text-align: center;">Fun_Space</h1>
-            <a href="/" style=" margin-left: 80%;">로그아웃</a>
-        </div>
+    <div class="domain" onclick="location.href='/';">
+        <h1 style="text-align: center;">Fun_Space</h1>
+    </div>
+    <div style="margin-left: 75%; margin-top: 2px">
+        <button type="submit" id="login_login" onclick="location.href='/login'" class="btn btn-light">로그인</button>
+        <button type="submit" id="logot_logout" onclick="logout()" class="btn btn-light">로그아웃</button>
+        <button type="button" id="signup_signup" onclick="location.href='/signup'" class="btn btn-light">회원가입</button>
+    </div>
+    <div style="margin-left: 50%;">
+        <button type="submit" onclick="location.href='/detail' " class="btn btn-light">글쓰기</button>
+    </div>
+    <div id="paste"></div>
+</body>
+<script>
+    $(document).ready(function () {
+       
+        if (localStorage.getItem("token")) {
+            $("#login_login").hide();
+            $("#logout_logout").show();
+            $("#signup_signup").hide();
+        } else {
+            $("#login_login").show();
+            $("#logout_logout").hide();
+            $("#signu_signup").show();
+        }
+        get_post()
+    })
+
+    //로그아웃
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+    };
+
+    function get_post() {
+        $.ajax({
+            type: "GET",
+            url: "/api/post",
+            data: {},
+            success: function (response) {
+                let comment = response;
+                for (let i = 0; i < comment.length; i++) {
+                    make_post(comment[i])
+                }
+            }
+        })
+    }
+    function make_post(post) {
+        let temphtml = ` 
+                            <div class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
+                            <div class="card-body" >
+                            <h5 class="card-title">${post["title"]}</h5>
+                            <p class="card-text">${post["write"]}</p>
+                            </div>
+                            </div>`
+        $("#paste").append(temphtml);
+    }
+        
+</script>
+
+</html>

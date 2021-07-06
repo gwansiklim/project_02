@@ -68,6 +68,7 @@
 
 </body>
 <script>
+// 회원가입
     function signup_post() {
         const nickname = $('#post_nickname').val();
         const email = $('#post_email').val();
@@ -85,7 +86,7 @@
           },
           success: function (response) {
               alert("회원가입을 축하드립니다.")
-              window.location.href="/"
+              window.location.href="/login"
           }, 
           error: function(error) {
               alert(error.responseJSON.errorMessage);

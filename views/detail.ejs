@@ -38,10 +38,58 @@
         padding-top: 20px;
         padding-left: 30px;
     }
+
+    .post_write {
+        width: 500px;
+        height: 500px;
+        margin: 20px auto;
+        padding: 50px;
+        border-radius: 5px;
+
+    }
 </style>
 
 <body>
-        <div class="domain" onclick="location.href='/';">
-            <h1 style="text-align: center;">Fun_Space</h1>
-            <a href="/" style=" margin-left: 80%;">로그아웃</a>
+    <div class="domain" onclick="location.href='/';">
+        <h1 style="text-align: center;">Fun_Space</h1>
+        <a href="/" style=" margin-left: 80%;">로그아웃</a>
+    </div>
+    <div class="post_write" id="content">
+        <div class="form-group" style="max-width: 40rem; margin: auto; margin-top: 10px;">
+            <label for="exampleFormControlInput1">title</label>
+            <input type="id" class="form-control" id="titleing" placeholder="title">
         </div>
+        <div class="form-group" style="margin-top: 10px;">
+            <label for="exampleFormControlTextarea1">write</label>
+            <textarea class="form-control" id="writeing" rows="5"></textarea>
+        </div>
+        <button type="submit" onclick="content()" class="btn btn-secondary" id="posting"
+            style="margin-top: 10px; padding: auto;">게시글
+            작성</button>
+</body>
+<script>
+    function content() {
+        const write = $('#writeing').val();
+        const title = $('#titleing').val();
+        if (!(title && write) ) {
+                alert("입력되지 않았습니다.")
+                return
+            }
+            $.ajax({
+                type: "POST",
+                url: `/api/detail`,
+                data: {
+                    title: title,
+                    write: write,
+                },
+                success: function (response) {
+                    if(response["result"]=="success"){
+                     alert("작성이 완료되었습니다.")
+                     window.location.href= "/"
+                    }
+                }
+            })
+    }
+</script>
+
+</html>

@@ -28,7 +28,6 @@
     <title>Fun_Space</title>
 </head>
 <style>
-
     a {
         text-decoration-line: none;
         color: black;
@@ -42,29 +41,49 @@
 </style>
 
 <body>
-        <div class="domain" onclick="location.href='/';">
-            <h1 style="text-align: center;">Fun_Space</h1>
-            <a href="/" style=" margin-left: 80%;">로그아웃</a>
+    <div class="domain" onclick="location.href='/';">
+        <h1 style="text-align: center;">Fun_Space</h1>
+        <a href="/" style=" margin-left: 80%;">로그아웃</a>
+    </div>
+    <div style="max-width: 27rem; margin: auto; margin-top: 30px;">
+        <div class="form-group">
+            <label for="exampleInputEmail1">email</label>
+            <input type="email" id="gologin" class="form-control" aria-describedby="emailHelp"
+                placeholder="이메일을 입력해 주세요.">
         </div>
-        <div style="max-width: 27rem; margin: auto; margin-top: 30px;">
-            <div class="form-group">
-                <label for="exampleInputEmail1">email</label>
-                <input type="email" class="form-control" aria-describedby="emailHelp"
-                    placeholder="이메일을 입력해 주세요.">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" placeholder="비밀번호를 입력해 주세요.">
-            </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" id="gopassword" class="form-control" placeholder="비밀번호를 입력해 주세요.">
         </div>
-        <div style="margin-left: 45%; margin-top: 15px;">
-            <button type="submit" onclick="location.href='/main'" class="btn btn-light">로그인</button>
-            <button type="button" onclick="location.href='/signup'" class="btn btn-light">회원가입</button>
-        </div>
-           
+    </div>
+    <div style="margin-left: 45%; margin-top: 15px;">
+        <button type="submit" onclick="logininput()" class="btn btn-light">로그인</button>
+        <button type="button" onclick="location.href='/signup'" class="btn btn-light">회원가입</button>
+    </div>
+
 
 </body>
 <script>
+    function logininput() {
+        let email = $("#gologin").val();
+        let password = $("#gopassword").val()
+        $.ajax({
+            type: "POST",
+            url: "/api/login",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (response) {
+                if (response["errorMessage"]) {
+                    alert(response["errorMessage"])
+                    return;
+                }
+                localStorage.setItem("token", response.token);
+                window.location.href="/";
+            }
+        })
+    }
 
 </script>
 

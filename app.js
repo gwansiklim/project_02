@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 2000;
-const Middlewares = require("./middlewares/middlewares");
+const middlewares = require("./middlewares/middlewares");
 const connect = require("./schemas");
 connect();
 
@@ -16,15 +16,19 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.render("login");
+  res.render("main");
 });
 
 app.get("/signup", (req, res) => {
   res.render("signup");
 });
 
-app.get("/main", (req, res) => {
-  res.render("main");
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.get("/detail", (req, res) => {
+  res.render("detail");
 });
 
 app.listen(port, () => {
