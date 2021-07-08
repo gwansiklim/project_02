@@ -38,51 +38,61 @@
         padding-top: 20px;
         padding-left: 30px;
     }
+
+    .post_write {
+        width: 500px;
+        height: 500px;
+        margin: 20px auto;
+        padding: 50px;
+        border-radius: 5px;
+
+    }
 </style>
 
 <body>
     <div class="domain" onclick="location.href='/';">
         <h1 style="text-align: center;">Fun_Space</h1>
     </div>
-    <div style="max-width: 27rem; margin: auto; margin-top: 30px;">
-        <div class="form-group">
-            <label for="exampleInputEmail1">nickname</label>
-            <input type="email" id="gologin" class="form-control" aria-describedby="emailHelp"
-                placeholder="이메일을 입력해 주세요.">
+    <div class="post_write" id="content">
+        <div class="form-group" style="max-width: 40rem; margin: auto; margin-top: 10px;">
+            <label for="exampleFormControlInput1">title</label>
+            <input type="id" class="form-control" id="titleing" placeholder="title">
         </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" id="gopassword" class="form-control" placeholder="비밀번호를 입력해 주세요.">
+        <div class="form-group" style="margin-top: 10px;">
+            <label for="exampleFormControlTextarea1">write</label>
+            <textarea class="form-control" id="writeing" rows="5"></textarea>
         </div>
-    </div>
-    <div style="margin-left: 45%; margin-top: 15px;">
-        <button type="submit" onclick="logininput()" class="btn btn-light">로그인</button>
-        <button type="button" onclick="location.href='/signup'" class="btn btn-light">회원가입</button>
-    </div>
-
-
+        
+        <button type="submit" onclick="posting()" class="btn btn-secondary" id="posting"
+            style="margin-top: 10px; padding: auto;">게시글
+            작성</button>
 </body>
 <script>
-    function logininput() {
-        let nickname = $("#gologin").val();
-        let password = $("#gopassword").val()
-        $.ajax({
-            type: "POST",
-            url: "/api/login",
-            data: {
-                nickname:nickname,
-                password: password,
-            },
-            success: function (response) {
-                if (response["errorMessage"]) {
-                    alert(response["errorMessage"])
-                    return;
-                }
-                localStorage.setItem("token", response.token);
-                window.location.href="/";
+    function posting() {
+        const write = $('#writeing').val();
+        const title = $('#titleing').val();
+        console.log("헬로",write,title)
+        if (!(title && write)) {
+                alert("입력되지 않았습니다.")
+                return
             }
-        })
+            $.ajax({
+                type: "POST",
+                url: `/api/add/write`,
+                data: {
+                    title: title,
+                    write: write,
+                },
+                headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
+                success: function (response) {
+                    if(response["result"]=="success"){
+                     alert("작성이 완료되었습니다.")
+                     window.location.href= "/"
+                    }
+                }
+            })
     }
+   
 
 </script>
 

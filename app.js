@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const port = 2000;
-const middlewares = require("./middlewares/middlewares");
 const connect = require("./schemas");
 connect();
 
@@ -25,6 +24,10 @@ app.get("/signup", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("login");
+});
+
+app.get("/post", (req, res) => {
+  res.render("post");
 });
 
 app.get("/detail", (req, res) => {

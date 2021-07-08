@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const writeSchema = new Schema({
+const commentSchema = new Schema({
   nickname: {
     type: String,
     required: true,
@@ -18,4 +18,4 @@ const writeSchema = new Schema({
     type: Number,
   },
 });
-module.exports = mongoose.model("Write", writeSchema);
+module.exports = mongoose.model("Comment", commentSchema);

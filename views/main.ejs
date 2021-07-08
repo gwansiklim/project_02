@@ -52,54 +52,58 @@
     </div>
     <div style="margin-left: 75%; margin-top: 2px">
         <button type="submit" id="login_login" onclick="location.href='/login'" class="btn btn-light">로그인</button>
-        <button type="submit" id="logot_logout" onclick="logout()" class="btn btn-light">로그아웃</button>
+        <button type="submit" id="logout_logout" onclick="logout()" class="btn btn-light">로그아웃</button>
         <button type="button" id="signup_signup" onclick="location.href='/signup'" class="btn btn-light">회원가입</button>
     </div>
-    <div style="margin-left: 50%;">
-        <button type="submit" onclick="location.href='/detail' " class="btn btn-light">글쓰기</button>
+    <div style="margin-left: 48%;">
+        <button type="submit" onclick="location.href='/post'" id="posting" class="btn btn-light">글쓰기</button>
     </div>
-    <div id="paste"></div>
+    <div id="paste" onclick=""></div>
 </body>
 <script>
+
     $(document).ready(function () {
-       
+
         if (localStorage.getItem("token")) {
             $("#login_login").hide();
             $("#logout_logout").show();
             $("#signup_signup").hide();
+            $("#posting").show();
         } else {
             $("#login_login").show();
             $("#logout_logout").hide();
             $("#signu_signup").show();
+            $("#posting").hide();
         }
-        get_post()
     })
 
     //로그아웃
     function logout() {
         localStorage.clear();
         window.location.reload();
+        alert("안녕히 가세요. 또 방문 해주세요!")
     };
 
     function get_post() {
         $.ajax({
             type: "GET",
-            url: "/api/post",
+            url: "/api/get/write",
             data: {},
             success: function (response) {
-                let comment = response;
-                for (let i = 0; i < comment.length; i++) {
-                    make_post(comment[i])
+                let posts = response;
+                for (let i = 0; i < comment.length ; i++) {
+                    make_post(posts[i])
                 }
             }
         })
     }
-    function make_post(post) {
+    function make_post(posts) {
         let temphtml = ` 
-                            <div class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
+                            <div onclick="location.href='/api/postbox/${ post['_id'] }'" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
                             <div class="card-body" >
-                            <h5 class="card-title">${post["title"]}</h5>
-                            <p class="card-text">${post["write"]}</p>
+                            <h5 class="card-title">${posts["title"]}</h5>
+                            <p class="card-text">${posts["write"]}</p>
+                            <p class="card-text">${posts["nickname"]}</p>
                             </div>
                             </div>`
         $("#paste").append(temphtml);

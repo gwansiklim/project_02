@@ -52,10 +52,6 @@
                     placeholder="최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)">
             </div>
             <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" id="post_email" class="form-control emailinput" aria-describedby="emailHelp" placeholder="이메일을 입력해주세요">
-            </div>
-            <div class="form-group">
                 <label for="exampleInputPassword1">Password</label>
                 <input type="password" id="post_password" class="form-control" placeholder="최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)">
             </div>
@@ -71,16 +67,14 @@
 // 회원가입
     function signup_post() {
         const nickname = $('#post_nickname').val();
-        const email = $('#post_email').val();
         const password = $('#post_password').val();
         const confirmpassword = $('#post_confirmpassword').val();
  
         $.ajax({
           type: "POST",
-          url: "/api/post",
+          url: "/api/users",
           data: {
             nickname: nickname,
-            email: email,
             password: password,
             confirmpassword: confirmpassword,
           },
