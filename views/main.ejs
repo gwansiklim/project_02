@@ -43,7 +43,8 @@
     .domain {
         height: 150px;
         padding-top: 70px;
-    }
+    }  
+
 </style>
 
 <body>
@@ -58,7 +59,9 @@
     <div style="margin-left: 48%;">
         <button type="submit" onclick="location.href='/post'" id="posting" class="btn btn-light">글쓰기</button>
     </div>
+
     <div id="paste" onclick=""></div>
+    <button onclick="a()" >클릭 </button>
 </body>
 <script>
 
@@ -75,6 +78,7 @@
             $("#signu_signup").show();
             $("#posting").hide();
         }
+        get_post()
     })
 
     //로그아웃
@@ -91,7 +95,7 @@
             data: {},
             success: function (response) {
                 let posts = response;
-                for (let i = 0; i < comment.length ; i++) {
+                for (let i = 0; i < posts.length ; i++) {
                     make_post(posts[i])
                 }
             }
@@ -99,7 +103,7 @@
     }
     function make_post(posts) {
         let temphtml = ` 
-                            <div onclick="location.href='/api/postbox/${ post['_id'] }'" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
+                            <div onclick="location.href='/api/detail/${posts["_id"]}'" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
                             <div class="card-body" >
                             <h5 class="card-title">${posts["title"]}</h5>
                             <p class="card-text">${posts["write"]}</p>

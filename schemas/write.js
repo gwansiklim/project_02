@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const commentSchema = new Schema({
+const writeSchema = new Schema({
   nickname: {
     type: String,
     required: true,
@@ -15,7 +15,8 @@ const commentSchema = new Schema({
     required: true,
   },
   time: {
-    type: Number,
+    type: Date,
+    default: new Date(),
   },
 });
-module.exports = mongoose.model("Comment", commentSchema);
+module.exports = mongoose.model("Write", writeSchema);

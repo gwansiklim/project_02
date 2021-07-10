@@ -62,140 +62,56 @@
     <div id="addpost"></div>
     <div onclick="box()" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
         <div class="card-body" style="height: 7rem;">
-            <h5 class="card-title" id="titleing">
-                <%= comment.title %>
-            </h5>
-            <p class="card-text" id="writeing">
-                <%= comment.write %>
-            </p>
-            <p class="card-text" id="writeing">
-                <%= comment.nickname %>
-            </p>
+            <h5 class="card-title" id="titleing"><%= post.title %></h5>
+            <p class="card-text" id="writeing"><%= post.write %></p>
+            <p class="card-text" id="nameing"><%= post.nickname %></p>
         </div>
     </div>
-    <!-- <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light" onclick="location.href='/editdetail'">게시글 수정</button> -->
+    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light" onclick="location.href='/api/editpost/<%= post._id %>'">게시글 수정</button>
     <div id="form-commentInfo" class="poster">
         <input onclick="commenting()" id="comment-input" style="width: 30rem; margin-top: 30px;" placeholder="댓글을 입력해 주세요.">
-        <button style="margin-left: 5px;" type="button" class="btn btn-light" onclick="posting()">작성</button>
         <button style="margin-left: 5px;" type="button" class="btn btn-light" onclick="modify()">수정하기</button>
     </div>
-    <div id="posting"></div>
+    <!-- // <div id="trach" style="text-align: center; margin-top: 30px;">
+        // <div>${write["date"]}</div>
+        // <div >${write["comment"]}</div>
+        // <div >${write["nickname"]}</div>
+        // <div style="margin-top: 20px;">
+        //     <button onclick="commenting('${write['_id']}')"  type="button" class="btn btn-light">수정</button>
+        //     <button onclick="deleteing('${write['_id']}')" style="margin-left: 10px;" type="button" class="btn btn-light">삭제</button>
+        //     <div data-id="${write['_id']}"></div>
+        // </div>
+        // </div> -->
+    <div onclick="get_post()" id="posting"></div>
     </div>
     <div id="get_coment">
-
     </div>
 </body>
 <script>
 
-    // 댓글 작성 요청
-    function posting() {
-        const comment = $('#comment-input').val();
-        if (!(localStorage.getItem("token"))) {
-            alert("로그인 후 이용해 주세요.")
-            window.location.href = "/login"
-        }
-        $.ajax({
-            type: "POST",
-            url: "/api/add/comment",
-            data: {
-                comment: comment,
-            },
-            headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-            success: function (response) {
-                if (response["result"] == "success") {
-                    alert("작성이 완료되었습니다.")
-                    window.location.reload()
-                }
-            }
-        })
-    }
-   
-    // 댓글 달기.
-    function get_postbox() {
-        $.ajax({
-            type: "GET",
-            url: "/api/get/memos",
-            data: {},
-            headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-            success: function (response) {
-                let write = response;
-                for (let i = 0; i < write.length; i++) {
-                    get_write(write[i])
-                }
-            }
-        })
-    }
-    function get_write(write) {
-        const mydate = new Date(write["date"])
-        write["date"] = `${mydate.getUTCFullYear()} / ${mydate.getUTCMonth() + 1} / ${mydate.getDate()}`
-        let temphtml = `
-                        <div id="trach" style="text-align: center; margin-top: 30px;">
-                        <div>${write["date"]}</div>
-                        <div >${write["comment"]}</div>
-                        <div >${write["nickname"]}</div>
-                        <div style="margin-top: 20px;">
-                            <button onclick="commenting('${write['_id']}')"  type="button" class="btn btn-light">수정</button>
-                            <button onclick="deleteing('${write['_id']}')" style="margin-left: 10px;" type="button" class="btn btn-light">삭제</button>
-                            <div data-id="${write['_id']}"></div>
-                        </div>
-                        </div>
-                    `
-        $("#posting").append(temphtml)
-    }
+$(document).ready(function () {
 
-    // 댓글 수정할 정보 가져오기
-    function commenting(_id) { 
-        if (!(localStorage.getItem("token"))) {
-            alert("정보 권한이 없습니다.")
-            window.location.reload();
-        }
-        $.ajax({
-            type: "GET",
-            url: `/api/get/memo/${_id}`,
-            data: {},
-            headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-            success: function(response) {
-                $('#comment-input').val(response['write']['comment']);
-            }
-        })
-    }
+if (localStorage.getItem("token")) {
+    $("#login_login").hide();
+    $("#logout_logout").show();
+    $("#signup_signup").hide();
+    $("#posting").show();
+} else {
+    $("#login_login").show();
+    $("#logout_logout").hide();
+    $("#signu_signup").show();
+    $("#posting").hide();
+}
+})
 
-    //댓글 수정
-    function modify() {
-        var link = document.location
-        console.log("안녕")
-        // $.ajax({
-        //     type: "PUT",
-        //     url: `/api/get/memo/`,
-        //     data: {
-        //         comment: comment,
-        //     },
-        //     headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-        //     success: function(response) {
-        //         alert(response['msg'])
-        //         window.location.reload();
-        //     }
-        // })
-    }
+//로그아웃
+function logout() {
+localStorage.clear();
+window.location.reload();
+alert("안녕히 가세요. 또 방문 해주세요!")
+}
 
-    // 댓글 삭제
-    function deleteing(_id) {
-        const commentId = _id
-        $.ajax({
-            type: "DELETE",
-            url: `/api/get/comment/${commentId}`,
-            data: {},
-            headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-            success: function(response) {
-                if (confirm("삭제 하시겠습니까? ") == true) {
-                    document.removefrm.submit();
-                } else {
-                    return false;
-                }
-            }
-        }) 
-        window.location.reload();
-    }
+
 </script>
 
 </html>
