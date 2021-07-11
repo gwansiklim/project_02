@@ -13,9 +13,5 @@ const userSchema = new Schema({
   confirmpassword: {
     type: String,
   },
-  time: {
-    type: Date,
-    default: new Date(),
-  },
 });
 module.exports = mongoose.model("User", userSchema);

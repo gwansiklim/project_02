@@ -1,19 +1,56 @@
 const express = require("express");
 const Joi = require("joi");
-const User = require("../schemas/user");
 const jwt = require("jsonwebtoken");
+const User = require("../schemas/user");
 const Write = require("../schemas/write");
 const Comment = require("../schemas/comment");
 const middleware = require("../middlewares/middlewares");
 const router = express.Router();
 
-const postUserSchema = Joi.object({
-  nickname: Joi.string().alphanum().min(3).max(20).required(),
-  password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-  confirmpassword: Joi.ref("password"),
-});
-
 //회원 가입.
+router.post("/users", async (req, res) => {
+  const { nickname, password, confirmpassword } = req.body;
+
+  const exists = await User.findOne({ nickname }); // TODO:입력받은 username을 가지고 데이터베이스에서 사용자르 찾아야합니다. post가 async이기에 await이 앞에 붙으면 좋을 것 같아요
+  if (exists) {
+    res.statusCode = 400;
+    res.send(`중복된 닉네임입니다.`);
+    return;
+  }
+  // 닉네임 검증 reg
+  if (!/[a-zA-Z0-9]+/.test(nickname) || nickname.length < 3) {
+    res.statusCode = 400;
+    res.send(
+      `닉네임은 3자이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 를 포함해야합니다.`
+    );
+    return;
+  }
+
+  // 패스워드 검증
+  if (password.includes(nickname) || password.length < 4) {
+    res.statusCode = 400;
+    res.send(`비밀번호는 4자이상이며 닉네임을 포함하면 안됩니다.`);
+    return;
+  }
+
+  // 두 패스워다가 같은지 검사
+  if (password !== confirmpassword) {
+    res.statusCode = 400;
+    res.send(`비밀번호가 일치하지 않습니다.`);
+    return;
+  }
+
+  // 모든 검사가 통과 한 후에
+  const user = new User({
+    nickname,
+    password,
+  });
+
+  //유저를 저장, statusCode 성공 리턴
+  await user.save();
+  res.statusCode = 200;
+  res.send();
+});
 
 const postloginSchema = Joi.object({
   nickname: Joi.string().required(),
@@ -25,15 +62,16 @@ router.post("/login", async (req, res) => {
     const { nickname, password } = await postloginSchema.validateAsync(
       req.body
     );
-    const user = await Post.findOne({ nickname, password }).exec;
-
+    const user = await User.findOne({ $and: [{ nickname }, { password }] });
+    console.log(user);
     if (!user) {
       res.status(400).send({
         errorMessage: "이메일 또는 패스워드가 잘못되었습니다.",
       });
       return;
     }
-    const token = jwt.sign({ userId: user.userId }, "im-gwan-sik");
+    console.log("위치", user.Id);
+    const token = jwt.sign({ userId: user.Id }, "limgwansik");
     res.send({
       token,
     });
@@ -47,6 +85,7 @@ router.post("/login", async (req, res) => {
 
 //게시글 작성
 router.post("/writes", middleware, async (req, res) => {
+  console.log("입장");
   const { title, write } = req.body;
   const user = res.locals.user;
   await Write.create({
@@ -81,7 +120,6 @@ router.get("/editpost/:_id", async (req, res) => {
 router.put("/editpost/:_id", async (req, res) => {
   const { title, write } = req.body;
   const { _id } = req.params;
-  console.log(title, write, _id);
   await Write.updateOne({ _id }, { $set: { title: title, write: write } });
   res.json({ msg: "수정 되었습니다." });
 });
