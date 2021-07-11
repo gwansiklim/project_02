@@ -4,7 +4,6 @@ const User = require("../schemas/user");
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
   const [tokenType, tokenValue] = authorization.split(" ");
-  console.log(tokenValue, tokenType);
 
   if (tokenType !== "Bearer") {
     res.status(401).send({
@@ -14,10 +13,7 @@ module.exports = async (req, res, next) => {
   }
   try {
     const { userId } = jwt.verify(tokenValue, "limgwansik");
-    console.log(userId);
-    // const foundUser = await User.findOne({ nickname: nickname });
-    User.findByPk({ userId }).then((user) => {
-      console.log(user);
+    User.findById(userId).then((user) => {
       res.locals.user = user;
       next();
     });

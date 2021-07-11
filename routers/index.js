@@ -20,6 +20,7 @@ router.post("/users", async (req, res) => {
   // 닉네임 검증 reg
   if (!/[a-zA-Z0-9]+/.test(nickname) || nickname.length < 3) {
     res.statusCode = 400;
+    console.log("회원가입");
     res.send(
       `닉네임은 3자이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 를 포함해야합니다.`
     );
@@ -70,8 +71,8 @@ router.post("/login", async (req, res) => {
       });
       return;
     }
-    console.log("위치", user.Id);
-    const token = jwt.sign({ userId: user.Id }, "limgwansik");
+    console.log("위치", user._id);
+    const token = jwt.sign({ userId: user._id }, "limgwansik");
     res.send({
       token,
     });
@@ -88,6 +89,7 @@ router.post("/writes", middleware, async (req, res) => {
   console.log("입장");
   const { title, write } = req.body;
   const user = res.locals.user;
+  console.log(user);
   await Write.create({
     title: title,
     write: write,
