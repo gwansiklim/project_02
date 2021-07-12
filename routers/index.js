@@ -11,7 +11,7 @@ const router = express.Router();
 router.post("/users", async (req, res) => {
   const { nickname, password, confirmpassword } = req.body;
 
-  const exists = await User.findOne({ nickname }); // TODO:입력받은 username을 가지고 데이터베이스에서 사용자르 찾아야합니다. post가 async이기에 await이 앞에 붙으면 좋을 것 같아요
+  const exists = await User.findOne({ nickname });
   if (exists) {
     res.statusCode = 400;
     res.send(`중복된 닉네임입니다.`);
@@ -20,7 +20,6 @@ router.post("/users", async (req, res) => {
   // 닉네임 검증 reg
   if (!/[a-zA-Z0-9]+/.test(nickname) || nickname.length < 3) {
     res.statusCode = 400;
-    console.log("회원가입");
     res.send(
       `닉네임은 3자이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 를 포함해야합니다.`
     );
@@ -53,26 +52,22 @@ router.post("/users", async (req, res) => {
   res.send();
 });
 
-const postloginSchema = Joi.object({
-  nickname: Joi.string().required(),
-  password: Joi.string().required(),
-});
+// const postloginSchema = Joi.object({
+//   nickname: Joi.string().required(),
+//   password: Joi.string().required(),
+// });
 // 로그인
 router.post("/login", async (req, res) => {
   try {
-    const { nickname, password } = await postloginSchema.validateAsync(
-      req.body
-    );
-    const user = await User.findOne({ $and: [{ nickname }, { password }] });
-    console.log(user);
+    const { nickname, password } = req.body;
+    const user = await User.findOne({ nickname, password });
     if (!user) {
       res.status(400).send({
         errorMessage: "이메일 또는 패스워드가 잘못되었습니다.",
       });
       return;
     }
-    console.log("위치", user._id);
-    const token = jwt.sign({ userId: user._id }, "limgwansik");
+    const token = jwt.sign({ userId: user.nickname }, "lim-gwan-sik");
     res.send({
       token,
     });
@@ -86,14 +81,13 @@ router.post("/login", async (req, res) => {
 
 //게시글 작성
 router.post("/writes", middleware, async (req, res) => {
-  console.log("입장");
   const { title, write } = req.body;
   const user = res.locals.user;
-  console.log(user);
+  console.log(user, title, write);
   await Write.create({
     title: title,
     write: write,
-    nickname: user.nickname,
+    nickname: user,
   });
   res.send({ result: "success" });
 });
@@ -112,18 +106,25 @@ router.get("/detail/:_id", async (req, res) => {
 });
 
 // 수정페이지
-router.get("/editpost/:_id", async (req, res) => {
+router.get("/editpost/:_id", middleware, async (req, res) => {
   const { _id } = req.params;
   const post = await Write.findOne({ _id });
   res.render("editpost", { post });
 });
 
 // 수정하기
-router.put("/editpost/:_id", async (req, res) => {
+router.put("/editpost/:_id", middleware, async (req, res) => {
+  console.log(req);
   const { title, write } = req.body;
   const { _id } = req.params;
   await Write.updateOne({ _id }, { $set: { title: title, write: write } });
   res.json({ msg: "수정 되었습니다." });
+});
+
+router.delete("/editpost/:_id", middleware, async (req, res) => {
+  const { _id } = req.params;
+  await Write.deleteOne({ _id });
+  res.json({ msg: "삭제 되었습니다." });
 });
 
 module.exports = router;

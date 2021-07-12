@@ -4,7 +4,6 @@ const User = require("../schemas/user");
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
   const [tokenType, tokenValue] = authorization.split(" ");
-
   if (tokenType !== "Bearer") {
     res.status(401).send({
       erroMessage: "로그인 후 사용하세요!",
@@ -12,9 +11,9 @@ module.exports = async (req, res, next) => {
     return;
   }
   try {
-    const { userId } = jwt.verify(tokenValue, "limgwansik");
-    User.findById(userId).then((user) => {
-      res.locals.user = user;
+    const { userId } = jwt.verify(tokenValue, "lim-gwan-sik");
+    User.findOne({ userId }).then((user) => {
+      res.locals.user = userId;
       next();
     });
   } catch (error) {

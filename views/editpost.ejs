@@ -66,6 +66,8 @@
         
         <button type="submit" onclick="posting()" class="btn btn-secondary" id="posting"
             style="margin-top: 10px; padding: auto;">수정하기</button>
+            <button type="submit" onclick="get_delete()" class="btn btn-secondary" id="posting"
+            style="margin-top: 10px; padding: auto;">삭제하기</button>
 </body>
 <script>
     $('#title_post').val('<%= post.title %>')
@@ -73,22 +75,39 @@
     function posting() {
         const write = $('#write_post').val()
         const title = $('#title_post').val()
+        console.log(write, title)
         if (!(title && write )) {
                 alert("입력되지 않았습니다.")
         }
         $.ajax({
                 type: "PUT",
-                url: `/editpost/<%= post._id %>`,
+                url: `/api/editpost/<%= post._id %>`,
                 data: {
-                    title,
-                    write,
+                    title: title,
+                    write: write,
                 },
+                headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
                 success: function (response) {
                     alert(response['msg'])
                 }
             })
             location.href = `/api/detail/<%= post._id %>`
         }
+
+        function get_delete() {
+            $.ajax({
+                type: "DELETE",
+                url: `/api/editpost/<%= post._id %>`,
+                data: {},
+                success: function (response) {
+                    alert(response['msg'])
+                }
+
+            })
+            location.href = "/"
+        }
+
+
 
 </script>
 
