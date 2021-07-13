@@ -83,7 +83,6 @@ router.post("/login", async (req, res) => {
 router.post("/writes", middleware, async (req, res) => {
   const { title, write } = req.body;
   const user = res.locals.user;
-  console.log(user, title, write);
   await Write.create({
     title: title,
     write: write,
@@ -102,26 +101,27 @@ router.get("/get/write", async (req, res) => {
 router.get("/detail/:_id", async (req, res) => {
   const { _id } = req.params;
   const post = await Write.findOne({ _id });
-  res.render("detail", { post });
+  res.send(post);
 });
 
-// 수정페이지
+// 수정페이지로 정보 보내기.
 router.get("/editpost/:_id", middleware, async (req, res) => {
   const { _id } = req.params;
-  const post = await Write.findOne({ _id });
-  res.render("editpost", { post });
+  const user = res.locals.user;
+  const write = await Write.findOne({ _id });
+  res.render("editpost", { write });
 });
 
-// 수정하기
-router.put("/editpost/:_id", middleware, async (req, res) => {
-  console.log(req);
+// 게시글 수정하기
+router.put("/editpost/:_id", async (req, res) => {
   const { title, write } = req.body;
   const { _id } = req.params;
   await Write.updateOne({ _id }, { $set: { title: title, write: write } });
   res.json({ msg: "수정 되었습니다." });
 });
 
-router.delete("/editpost/:_id", middleware, async (req, res) => {
+//게시글 삭제
+router.delete("/editpost/:_id", async (req, res) => {
   const { _id } = req.params;
   await Write.deleteOne({ _id });
   res.json({ msg: "삭제 되었습니다." });

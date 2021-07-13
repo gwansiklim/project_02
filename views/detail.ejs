@@ -59,15 +59,14 @@
         <button type="submit" id="logout_logout" onclick="logout()" class="btn btn-light">로그아웃</button>
         <button type="button" id="signup_signup" onclick="" class="btn btn-light">회원가입</button>
     </div>
-    <div id="addpost"></div>
     <div onclick="box()" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
         <div class="card-body" style="height: 7rem;">
-            <h5 class="card-title" id="titleing"><%= post.title %></h5>
-            <p class="card-text" id="writeing"><%= post.write %></p>
-            <p class="card-text" id="nameing"><%= post.nickname %></p>
+            <h5 class="card-title" id="titleing"></h5>
+            <p class="card-text" id="writeing"></p>
+            <p class="card-text" id="nameing"></p>
         </div>
     </div>
-    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light" onclick="location.href='/api/editpost/<%= post._id %>'">게시글 수정</button>
+    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light">게시글 수정</button>
     <div id="form-commentInfo" class="poster">
         <input onclick="commenting()" id="comment-input" style="width: 30rem; margin-top: 30px;" placeholder="댓글을 입력해 주세요.">
         <button style="margin-left: 5px;" type="button" class="btn btn-light" onclick="modify()">수정하기</button>
@@ -82,12 +81,14 @@
         //     <div data-id="${write['_id']}"></div>
         // </div>
         // </div> -->
-    <div onclick="get_post()" id="posting"></div>
+    <div onclick="" id="posting"></div>
     </div>
     <div id="get_coment">
     </div>
 </body>
 <script>
+    const postId = window.location.search.replace('?', '');
+    get_post(postId) 
 
 $(document).ready(function () {
 
@@ -110,6 +111,23 @@ localStorage.clear();
 window.location.reload();
 alert("안녕히 가세요. 또 방문 해주세요!")
 }
+
+// 
+function get_post(_id) {
+    console.log("안녕", _id)
+    $.ajax({
+        type: "GET",
+        url: `/api/detail/${_id}`,
+        data: {},
+        success: function(response) {
+            let get_write = response;
+            $('#titleing').append(get_write.title).val()
+            $('#writeing').append(get_write.write).val()
+            $('#nameing').append(get_write.nickname).val()
+        }
+    })
+}
+
 
 
 </script>

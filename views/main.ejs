@@ -102,7 +102,7 @@
     }
     function make_post(posts) {
         let temphtml = ` 
-                            <div onclick="location.href='/api/detail/${posts["_id"]}'" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
+                            <div onclick="location.href='/detail?${posts._id}'" class="card w-75" style="margin: auto; margin-top: 40px; text-align: center;">
                             <div class="card-body" >
                             <h5 class="card-title">${posts["title"]}</h5>
                             <p class="card-text">${posts["write"]}</p>
@@ -110,6 +110,18 @@
                             </div>
                             </div>`
         $("#paste").append(temphtml);
+    }
+    function godetail(_id) {
+        $.ajax({
+            type: "GET",
+            url: `/api/detail/${_id}`,
+            data: {},
+            async: false,
+            success: function(response){
+                console.log(response)
+
+            }
+        })
     }
         
 </script>
