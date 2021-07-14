@@ -70,41 +70,24 @@
             style="margin-top: 10px; padding: auto;">삭제하기</button>
 </body>
 <script>
-    $('#title_post').val('<%= post.title %>')
-    $('#write_post').val('<%= post.write %>')
-    function posting() {
-        const write = $('#write_post').val()
-        const title = $('#title_post').val()
-        if (!(title && write )) {
-                alert("입력되지 않았습니다.")
-        }
-        $.ajax({
-                type: "PUT",
-                url: `/api/editpost/<%= post._id %>`,
-                data: {
-                    title: title,
-                    write: write,
-                },
-                headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
-                success: function (response) {
-                    alert(response['msg'])
-                }
-            })
-            location.href = `/api/detail/<%= post._id %>`
-        }
+    const editPostId = window.location.search.replace('?', '');
+    get_write(editPostId)
 
-        function get_delete() {
-            $.ajax({
-                type: "DELETE",
-                url: `/api/editpost/<%= post._id %>`,
-                data: {},
-                success: function (response) {
-                    alert(response['msg'])
-                }
-
-            })
-            location.href = "/"
+    function get_write(_id) {
+    console.log("안녕", _id)
+    $.ajax({
+        type: "GET",
+        url: `/api/editpost/${_id}`,
+        data: {},
+        success: function(response) {
+            console.log(response)
+            let write = response;
+            $('#title_post').append(write.title).val()
+            $('#write_post').append(write.write).val()
         }
+    })
+}
+
 
 
 

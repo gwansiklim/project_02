@@ -66,70 +66,102 @@
             <p class="card-text" id="nameing"></p>
         </div>
     </div>
-    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light">게시글 수정</button>
+    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light"
+        onclick="location.href=`/editpost/${post._id}` ">게시글 수정</button>
     <div id="form-commentInfo" class="poster">
-        <input onclick="commenting()" id="comment-input" style="width: 30rem; margin-top: 30px;" placeholder="댓글을 입력해 주세요.">
-        <button style="margin-left: 5px;" type="button" class="btn btn-light" onclick="modify()">수정하기</button>
+        <input  id="comment-input" style="width: 30rem; margin-top: 30px;"
+            placeholder="댓글을 입력해 주세요.">
+        <button style="margin-left: 5px;" type="button" class="btn btn-light" id="confirmcomment" onclick="post_comment()">댓글달기</button>
     </div>
-    <!-- // <div id="trach" style="text-align: center; margin-top: 30px;">
-        // <div>${write["date"]}</div>
-        // <div >${write["comment"]}</div>
-        // <div >${write["nickname"]}</div>
-        // <div style="margin-top: 20px;">
-        //     <button onclick="commenting('${write['_id']}')"  type="button" class="btn btn-light">수정</button>
-        //     <button onclick="deleteing('${write['_id']}')" style="margin-left: 10px;" type="button" class="btn btn-light">삭제</button>
-        //     <div data-id="${write['_id']}"></div>
-        // </div>
-        // </div> -->
-    <div onclick="" id="posting"></div>
+    <div>
+        <div style="margin-left: 50%; text-align: center;"></div>
+            <h3>comment</h3>
+            <a >nickname</a>
+            <div style="margin-top: 20px;">
+            <button onclick=""  type="button" class="btn btn-light">수정</button>
+            <button onclick="" style="margin-left: 10px;" type="button" class="btn btn-light">삭제</button>
+            <div data-id="${comment['_id']}"></div>
     </div>
-    <div id="get_coment">
+    <div id="postComment"></div>
     </div>
+
 </body>
 <script>
-    const postId = window.location.search.replace('?', '');
-    get_post(postId) 
+    const Id = window.location.search.replace('?', '');
+    get_post(Id)
 
-$(document).ready(function () {
-
-if (localStorage.getItem("token")) {
-    $("#login_login").hide();
-    $("#logout_logout").show();
-    $("#signup_signup").hide();
-    $("#posting").show();
-} else {
-    $("#login_login").show();
-    $("#logout_logout").hide();
-    $("#signu_signup").show();
-    $("#posting").hide();
-}
-})
-
-//로그아웃
-function logout() {
-localStorage.clear();
-window.location.reload();
-alert("안녕히 가세요. 또 방문 해주세요!")
-}
-
-// 
-function get_post(_id) {
-    console.log("안녕", _id)
-    $.ajax({
-        type: "GET",
-        url: `/api/detail/${_id}`,
-        data: {},
-        success: function(response) {
-            let get_write = response;
-            $('#titleing').append(get_write.title).val()
-            $('#writeing').append(get_write.write).val()
-            $('#nameing').append(get_write.nickname).val()
+    $(document).ready(function () {
+        get_comment()
+        if (localStorage.getItem("token")) {
+            $("#login_login").hide();
+            $("#logout_logout").show();
+            $("#signup_signup").hide();
+            $('#confirmcomment').show();
+        } else {
+            $("#login_login").show();
+            $("#logout_logout").hide();
+            $("#signu_signup").show();
+            $('#confirmcomment').hide();
         }
     })
-}
 
+    //로그아웃
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+        alert("안녕히 가세요. 또 방문 해주세요!")
+    }
 
-
+    // 게시글 상세페이지
+    function get_post(Id) {
+        $.ajax({
+            type: "GET",
+            url: `/api/detail/${Id}`,
+            data: {},
+            success: function (response) {
+                let get_write = response;
+                $('#titleing').append(get_write.title).val()
+                $('#writeing').append(get_write.write).val()
+                $('#nameing').append(get_write.nickname).val()
+            }
+        })
+    }
+   
+    //댓글 저장
+    function post_comment() {
+        const comment = $('#comment-input').val()
+        if (!comment) {
+            alert("댓글이 입력되지 않았습니다.")
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/comments",
+            data: {
+                comment: comment,
+            },
+            success: function (response) {
+                if (response["result"] == "success") {
+                    alert("작성이 완료되었습니다.")
+                    window.location.reload();
+                }
+            }
+        })
+    }
+    
+    //댓글 불러오기
+    function get_comment(Id) {
+        $.ajax({
+            type: "GET",
+            url: "/api/comment/",
+            data: {},
+            success: function(response) {
+                let comment = response;
+                for(let i = 0; i < comment.length; i++){
+                    writeComments(comment[i])
+                }
+            }
+        })
+    }
 </script>
 
 </html>

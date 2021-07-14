@@ -52,10 +52,6 @@ router.post("/users", async (req, res) => {
   res.send();
 });
 
-// const postloginSchema = Joi.object({
-//   nickname: Joi.string().required(),
-//   password: Joi.string().required(),
-// });
 // 로그인
 router.post("/login", async (req, res) => {
   try {
@@ -100,31 +96,44 @@ router.get("/get/write", async (req, res) => {
 // 게시글 상세페이지
 router.get("/detail/:_id", async (req, res) => {
   const { _id } = req.params;
-  const post = await Write.findOne({ _id });
-  res.send(post);
+  const post = await Write.findById({ _id });
+  res.json(post);
 });
 
 // 수정페이지로 정보 보내기.
-router.get("/editpost/:_id", middleware, async (req, res) => {
+router.get("/editpost/:_id", async (req, res) => {
+  console.log(req.params);
   const { _id } = req.params;
-  const user = res.locals.user;
-  const write = await Write.findOne({ _id });
+  const write = await Write.findById({ _id });
   res.render("editpost", { write });
 });
 
 // 게시글 수정하기
-router.put("/editpost/:_id", async (req, res) => {
-  const { title, write } = req.body;
-  const { _id } = req.params;
-  await Write.updateOne({ _id }, { $set: { title: title, write: write } });
-  res.json({ msg: "수정 되었습니다." });
+// router.put("/editpost/:_id", async (req, res) => {
+//   const { title, write } = req.body;
+//   const { _id } = req.params;
+//   await Write.updateOne({ _id }, { $set: { title: title, write: write } });
+//   res.send({ msg: "수정 되었습니다." });
+// });
+
+// //게시글 삭제
+// router.delete("/editpost/:_id", async (req, res) => {
+//   const { _id } = req.params;
+//   await Write.deleteOne({ _id });
+//   res.json({ msg: "삭제 되었습니다." });
+// });
+
+//댓글 정보 저장
+router.post("/comments", async (req, res) => {
+  const { comment } = req.body;
+  await Comment.create({ comment: comment });
+  res.send({ result: "success" });
 });
 
-//게시글 삭제
-router.delete("/editpost/:_id", async (req, res) => {
-  const { _id } = req.params;
-  await Write.deleteOne({ _id });
-  res.json({ msg: "삭제 되었습니다." });
+//댓길 보여주기
+router.get("/comment", async (req, res) => {
+  const writeComment = await Comment.find().sort(-Date).exec();
+  res.json(writeComment);
 });
 
 module.exports = router;

@@ -4,13 +4,8 @@ const { Schema } = mongoose;
 const commentSchema = new Schema({
   nickname: {
     type: String,
-    required: true,
   },
-  title: {
-    type: String,
-    required: true,
-  },
-  write: {
+  comment: {
     type: String,
     required: true,
   },
