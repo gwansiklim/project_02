@@ -66,44 +66,33 @@
             <p class="card-text" id="nameing"></p>
         </div>
     </div>
-    <button style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light"
-        onclick="location.href=`/editpost/${post._id}` ">게시글 수정</button>
+    <button id="target" style="margin-left: 46%; margin-top: 20px;" type="button" class="btn btn-light">게시글 수정</button>
     <div id="form-commentInfo" class="poster">
-        <input  id="comment-input" style="width: 30rem; margin-top: 30px;"
-            placeholder="댓글을 입력해 주세요.">
-        <button style="margin-left: 5px;" type="button" class="btn btn-light" id="confirmcomment" onclick="post_comment()">댓글달기</button>
+        <input id="comment-input" style="width: 30rem; margin-top: 30px;" placeholder="댓글을 입력해 주세요.">
+        <button style="margin-left: 5px;" type="button" class="btn btn-light" id="confirmcomment"
+            onclick="post_comment()">댓글달기</button>
     </div>
     <div>
         <div style="margin-left: 50%; text-align: center;"></div>
-            <h3>comment</h3>
-            <a >nickname</a>
-            <div style="margin-top: 20px;">
-            <button onclick=""  type="button" class="btn btn-light">수정</button>
+        <h3>comment</h3>
+        <a>nickname</a>
+        <div style="margin-top: 20px;">
+            <button onclick="" type="button" class="btn btn-light">수정</button>
             <button onclick="" style="margin-left: 10px;" type="button" class="btn btn-light">삭제</button>
-            <div data-id="${comment['_id']}"></div>
-    </div>
-    <div id="postComment"></div>
+            <div data-id=""></div>
+        </div>
+        <div id="postComment"></div>
     </div>
 
 </body>
 <script>
+    const _id = window.location.search.replace('?', '');
+    var button = document.getElementById('target');
+    button.addEventListener('click', function (event) { window.location.href = `/editpost?${_id}` });
+
     const Id = window.location.search.replace('?', '');
     get_post(Id)
-
-    $(document).ready(function () {
-        get_comment()
-        if (localStorage.getItem("token")) {
-            $("#login_login").hide();
-            $("#logout_logout").show();
-            $("#signup_signup").hide();
-            $('#confirmcomment').show();
-        } else {
-            $("#login_login").show();
-            $("#logout_logout").hide();
-            $("#signu_signup").show();
-            $('#confirmcomment').hide();
-        }
-    })
+    
 
     //로그아웃
     function logout() {
@@ -126,8 +115,8 @@
             }
         })
     }
-   
-    //댓글 저장
+
+   //댓글 저장
     function post_comment() {
         const comment = $('#comment-input').val()
         if (!comment) {
@@ -147,21 +136,21 @@
             }
         })
     }
-    
+
     //댓글 불러오기
-    function get_comment(Id) {
-        $.ajax({
-            type: "GET",
-            url: "/api/comment/",
-            data: {},
-            success: function(response) {
-                let comment = response;
-                for(let i = 0; i < comment.length; i++){
-                    writeComments(comment[i])
-                }
-            }
-        })
-    }
+    // function get_comment(Id) {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/api/comment/",
+    //         data: {},
+    //         success: function(response) {
+    //             let comment = response;
+    //             for(let i = 0; i < comment.length; i++){
+    //                 writeComments(comment[i])
+    //             }
+    //         }
+    //     })
+    // }
 </script>
 
 </html>

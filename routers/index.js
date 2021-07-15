@@ -102,29 +102,29 @@ router.get("/detail/:_id", async (req, res) => {
 
 // 수정페이지로 정보 보내기.
 router.get("/editpost/:_id", async (req, res) => {
-  console.log(req.params);
   const { _id } = req.params;
   const write = await Write.findById({ _id });
-  res.render("editpost", { write });
+  res.send(write);
 });
 
 // 게시글 수정하기
-// router.put("/editpost/:_id", async (req, res) => {
-//   const { title, write } = req.body;
-//   const { _id } = req.params;
-//   await Write.updateOne({ _id }, { $set: { title: title, write: write } });
-//   res.send({ msg: "수정 되었습니다." });
-// });
+router.put("/editpost/:_id", async (req, res) => {
+  const { title, write } = req.body;
+  const { _id } = req.params;
+  console.log(title, write, _id);
+  await Write.updateOne({ _id }, { $set: { title: title, write: write } });
+  res.send({ msg: "수정 되었습니다." });
+});
 
-// //게시글 삭제
-// router.delete("/editpost/:_id", async (req, res) => {
-//   const { _id } = req.params;
-//   await Write.deleteOne({ _id });
-//   res.json({ msg: "삭제 되었습니다." });
-// });
+//게시글 삭제
+router.delete("/editpost/:_id", async (req, res) => {
+  const { _id } = req.params;
+  await Write.deleteOne({ _id });
+  res.json({ msg: "삭제 되었습니다." });
+});
 
 //댓글 정보 저장
-router.post("/comments", async (req, res) => {
+router.post("/comments", middleware, async (req, res) => {
   const { comment } = req.body;
   await Comment.create({ comment: comment });
   res.send({ result: "success" });

@@ -57,36 +57,68 @@
     <div class="post_write" id="content">
         <div class="form-group" style="max-width: 40rem; margin: auto; margin-top: 10px;">
             <label for="exampleFormControlInput1">title</label>
-            <input type="text" class="form-control" id="title_post" >
+            <input type="text" class="form-control" id="title_post">
         </div>
         <div class="form-group" style="margin-top: 10px;">
             <label for="exampleFormControlTextarea1">write</label>
-            <textarea class="form-control" id="write_post" rows="5" ></textarea>
+            <textarea class="form-control" id="write_post" rows="5"></textarea>
         </div>
-        
+
         <button type="submit" onclick="posting()" class="btn btn-secondary" id="posting"
             style="margin-top: 10px; padding: auto;">수정하기</button>
-            <button type="submit" onclick="get_delete()" class="btn btn-secondary" id="posting"
+        <button type="submit" onclick="get_delete()" class="btn btn-secondary" id="deleteing"
             style="margin-top: 10px; padding: auto;">삭제하기</button>
 </body>
 <script>
-    const editPostId = window.location.search.replace('?', '');
-    get_write(editPostId)
+
+    const id = window.location.search.replace('?', '');
+    get_write(id)
+
 
     function get_write(_id) {
-    console.log("안녕", _id)
-    $.ajax({
-        type: "GET",
-        url: `/api/editpost/${_id}`,
-        data: {},
-        success: function(response) {
-            console.log(response)
-            let write = response;
-            $('#title_post').append(write.title).val()
-            $('#write_post').append(write.write).val()
+        $.ajax({
+            type: "GET",
+            url: `/api/editpost/${_id}`,
+            data: {},
+            success: function (response) {
+                let write = response;
+                document.getElementById('title_post').value = write.title
+                document.getElementById('write_post').value = write.write
+            }
+        })
+    }
+
+    function posting(_id) {
+        const title = $('#title_post').val()
+        const write = $('#write_post').val()
+        if (!(title && write)) {
+            alert("입력되지 않았습니다.")
         }
-    })
-}
+        console.log("안녕")
+        $.ajax({
+            type: "PUT",
+            url: `/api/editpost/${_id}`,
+            data: {
+                title: title,
+                write: write,
+            },
+            success: function (response) {
+                alert(response['msg'])
+            }
+        })
+    }
+
+    function get_delete() {
+        $.ajax({
+            type: "DELETE",
+            url: `/api/editpost/${_id}`,
+            data: {},
+            success: function (response) {
+                alert(response['msg'])
+                window.location.href = "/"
+            }
+        })
+    }
 
 
 
